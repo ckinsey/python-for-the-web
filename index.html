@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Python For the Web</h1>
+					<h3>Intro to Web Development with Flask and Django</h3>
+					<p>
+						<small><a href="http://hirelofty.com">Casey Kinsey</a> / <a href="http://twitter.com/cordiskinsey">@cordiskinsey</a></small>
+					</p>
+				</section>
+
+				<!-- Example of nested vertical slides -->
+				<section>
+                    <section>
+                        <h2>A Brief Primer on the Web</h2>
+                        <p>
+                            How does a browser request a web page, and how does a web server interpret that request?
+                        </p>
+                    </section>
+
+					<section>
+						<h2>HTTP, briefly</h2>
+						<p>HTTP is a protocol for accessing content (pages) from a webserver.  Web browsers send an HTTP Request to a webserver to retrieve content.</p>
+						<p>HTTP requests consist of a few components, most notably a <b>Method</b> and a <b>URL</b>.</p>
+					</section>
+					<section>
+						<h2>HTTP Methods (HTTP 1.1)</h2>
+					    <ul>
+					        <li><strong>GET</strong></li>
+					        <li><strong>POST</strong></li>
+					        <li>PUT</li>
+					        <li>DELETE</li>
+					    </ul>
+					</section>
+					<section>
+						<h2>HTTP URLs</h2>
+						<p>Uniform Resource Locators</p>
+						<br>
+						<b>URL:  http://www.google.com/maps</b>
+						<ul>
+						    <li>Protocol: http (port 80)
+						    <li>Domain: www.google.com</li>
+						    <li>URI:  /maps</li>
+						</ul>
+						<br>
+						<p>The server listening on port 80 at www.google.com receives:<br>
+						<b>GET /maps HTTP/1.1</b></p>
+					</section>
+					<section>
+					    <h2>Back in the day...</h2>
+					    <p>URIs mapped to files in folders.  Web servers simply found the correct file and returned it to the browser.</p>
+					    <p>GET /calendar/january/index.html</p>
+					    
+					    <pre><code>
+calendar/
+    january/ 
+        foo.html
+        index.html
+    february/
+    march/
+                        </code></pre>
+					</section>
+					
+					<section>
+					    <h2>The Common Gateway Interface</h2>
+					    <p>What if the server were able to run executable scripts to generate HTML?</p>
+					    <p>CGI did just that.  When certain files were accessed, the server would interpet scripting languages which output HTML, and the browser was none-the-wiser.</p>
+					    <p>GET /cgi-bin/calendar.pl</p>
+					    
+<pre><code>
+calendar/
+    january/ 
+        foo.html
+        index.html
+    february/
+    march/
+cgi-bin/calendar.pl -> Generated HTML
+</code></pre>					    
+					</section>
+					<section>
+					    <h2>Web Applications Today</h2>
+					    <p>CGI still exists (PHP is still commonly run as CGI scripting).</p>
+					    <p>New interfaces are designed to abstract file structures away entirely.</p>
+					    <p>WSGI is the standard interface for Python.  Web servers forward all requests to a WSGI application, and it is the application's responsibility to handle URIs.</p>
+					</section>
+					
+				</section>
+
+				<section>
+					<section>
+						<h2>Flask</h2>
+						<h3>A Python Micro-Framework for WSGI Applications</h3>
+						<p><a href="http://flask.pocoo.org" target=_blank">http://flask.pocoo.org</a></p>
+					</section>
+					<section>
+						<h2>A Simple Flask App</h2>
+						<p>app.py</p>
+<pre><code>
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    """
+    This is the index view for FayettePy.
+    It is loaded at "/"
+    """
+    return "It worked!"
+
+if __name__ == '__main__':
+    app.run(debug=True)
+</code></pre>
+						
+					</section>
+					<section>
+						<h2>Running the Development Server</h2>
+						<p>Flask ships with a minimal WSGI server for testing your application during development</p>
+<pre><code>user@sweet_rig:~/ $ python app.py</code></pre>
+
+                        <p>By default, your app will run at http://localhost:5000/</p>
+						
+					</section>
+					<section>
+					    <h2>Demo</h2>
+					    <small>Git branch: intro</small>
+					</section>
+				</section>
+
+				<section>
+				  <section>
+                        <h2>Flask: Routing</h2>
+                        <p>
+                            <a href="http://flask.pocoo.org/docs/0.10/quickstart/#routing">
+                                http://flask.pocoo.org/docs/0.10/quickstart/#routing
+                            </a>
+                        </p>
+                        <p>
+                            The routing engine is how you map URI's to Python functions (views).
+                        </p>
+                        <p>
+                            Applying the @app.route() decorator to a function maps a given URI to the decorated function:
+                        </p>
+<pre><code>
+@app.route("/some-uri")
+def my_view():
+    return "This view was routed via '/some-uri'"
+</code></pre>
+                    </section>
+				    <section>
+                        <h2>Flask: Routing with Variables</h2>
+                        <p>
+                            The routing engine is also able to route variable URIs.
+                        </p>
+                        <p>
+                            A simple variable URI segment can be added using
+                        </p>
+<pre><code>
+@app.route("/profile/&lt;username&gt;")
+def profile(username):
+    """
+    Whatever content is in the position of &lt;username&gt; in the route
+    has been assigned to the variable `username` which was passed 
+    to this function.
+    """
+    return "This profile belongs to:  %s" % username
+</code></pre>
+                    </section>
+                    <section>
+                        <h2>Flask: Routing with Variables, continued</h2>
+                        <p>
+                            The routing engine is able to convert variables to certain types (instead of the default, string) using converter syntax
+                        </p>
+                        <pre><code>
+@app.route("/profile/&lt;int:user_id&gt;")
+def profile(user_id):
+    """
+    The string after /profile/ will be converted to an integer
+    """
+    return "This profile belongs to user with id:  %d" % user_id
+                        </code></pre>
+                    </section>
+                    
+                    <section>
+                        <h2>Flask: URL Building</h2>
+                        <p>
+                            Using the routing engine, URLs can be built programmatically 
+                        </p>
+<pre><code>
+from flask import url_for
+
+@app.route("/profile/&lt;username&gt;")
+def profile(username):
+    """
+    Whatever content is in the position of &lt;username&gt; in the route
+    has been assigned to the variable `username` which was passed 
+    to this function.
+    """
+    return "This profile belongs to:  %s" % username
+    
+@app.route("/")
+def index():
+    """
+    Show a link to the user profile page for 'ckinsey'
+    """
+    profile_link = url_for('profile', username='ckinsey')
+    return "Check out this <a href='%s'>profile</a> % profile_link
+
+</code></pre>
+                    </section>
+                    <section>
+                        <h2>Demo</h2>
+                        <small>Git branch: routing</small>
+                    </section>
+                    
+                    
+       			</section>
+       			<section>
+				    <section>
+                        <h2>Flask: Templating</h2>
+                        <p>
+                            <a href="http://flask.pocoo.org/docs/0.10/quickstart/#rendering-templates">
+                                http://flask.pocoo.org/docs/0.10/quickstart/#rendering-templates
+                            </a>
+                        </p>
+                        <p>
+                            Flask uses the Jinja2 template engine <br>for rendering HTML templates.
+                        </p>
+                        <p>
+                            Templates are used to keep presentation <br>logic separate from application logic.
+                        </p>
+<pre><code>from flask import render_template
+@app.route("/")
+def index():
+    return render_template("index.html")
+</code></pre>
+                        <p>
+                            This code will render the template in /templates/index.html
+                        </p>
+                    </section>
+				    <section>
+                        <h2>Flask: Template Variables</h2>
+                        <p>Jinja2 templates can receive data from Python variables.</p>
+                        
+<pre><code>from flask import render_template
+@app.route("/")
+def index():
+    return render_template("index.html", 
+                            message="Welcome to my website!")
+</code></pre>
+                        <p>
+                            And the template can render them using Jinja2's syntax:
+                        </p>
+<pre><code><h1>This is the index page!</h1>
+<p>{{ message }}</p>
+</code></pre>
+                    </section>
+				    <section>
+                        <h2>Flask: Template Logic</h2>
+                        <p>Jinja2 templates can include logic, like for loops</p>
+                        
+<pre><code>from flask import render_template
+@app.route("/")
+def index():
+    colors = ['red', 'green', 'blue']
+    return render_template("index.html", 
+                            color_list=colors)
+</code></pre>
+                        
+<pre><code><h1>This is the index page!</h1>
+<ul>
+    {% for color in color_list %}
+    <li>{{ color }}</li>
+    {% endfor %}
+</ul>
+</code></pre>
+                    </section>
+				    <section>
+                        <h2>Flask: Template Logic</h2>
+                        <p>Or boolean conditionals:</p>
+                        
+<pre><code><h1>This is the index page!</h1>
+<ul>
+    {% for color in color_list %}
+    <li>
+        {% if color == 'red' %}
+            <span style="color: red">{{ color }}</span>
+        {% else %}
+            {{ color }}
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+</code></pre>
+                    </section>
+				    <section>
+                        <h2>Flask: Template Logic</h2>
+                        <p>And many other things!</p>
+                        <p>See <a href="http://jinja.pocoo.org/2/documentation/templates">
+                        http://jinja.pocoo.org/2/documentation/templates</a> for the full Jinja2 template documentation.
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Demo</h2>
+                        <small>Git branch: templating</small>
+                    </section>
+                </section>
+                
+                <section>
+                    <section>
+                        <h2>Flask:  Write Some Code!</h2>
+                        <p>Implementing application behavior is just a matter of writing Python code!</p>
+                        <p>
+                            Let's finish up the FayettePy website by integrating with the Meetup.com API.
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Demo</h2>
+                        <small>Completed code is in Git branch:  master</small>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h2>Other Topics to Research</h2>
+                        <ul>
+                            <li>
+                                Models / Databases<br>
+                                <a href="http://www.sqlalchemy.org">SQLAlchemy is the standard ORM used by Flask developers</a>
+                            </li>
+                            <li>
+                                Handling User Input (HTML Forms, POST requests)<br>
+                                <a href="http://flask.pocoo.org/docs/0.10/quickstart/#accessing-request-data">http://flask.pocoo.org/docs/0.10/quickstart/#accessing-request-data</a>
+                            </li>
+                            <li>
+                                Session Storage / Authentication<br>
+                                <a href="http://flask.pocoo.org/docs/0.10/quickstart/#sessions">http://flask.pocoo.org/docs/0.10/quickstart/#sessions</a>
+                            </li>
+                            <li>
+                                Deploying To a Webserver (I recommend uWSGI)<br>
+                                <a href="http://flask.pocoo.org/docs/0.10/deploying/uwsgi/">http://flask.pocoo.org/docs/0.10/deploying/uwsgi/</a>
+                            </li>
+                        </ul>
+                    </section>
+                    
+                </section>
+                <section>
+                    <section>
+                        <h2>Other Python Web Frameworks</h2>
+                    </section>
+                    <section>
+                        <h2>Django</h2>
+                        <h3>"The Web Framework for <br>Perfectionists with Deadlines"</h3>
+                        <p><a href="http://djangoproject.com/">http://www.djangoproject.com/</a></p>
+                    </section>
+                    <section>
+                        <h2>Django</h2>
+                        <ul>
+                            <li>Most widely used web framework for Python</li>
+                            <li>Very mature software (turned 10 this month!)</li>
+                            <li>Highly opinionated</li>
+                            <li>Ships with many components that are hard to replace</li>
+                        </ul>
+                        <p>
+                            Our FayettePy Project as Django Application:<br>
+                            <a href="">Insert GitHub Link</a>
+                        </p>
+                    </section>
+                    <section>
+                        <h2>Pyramid</h2>
+                        <p><a href="http://www.pylonsproject.org">http://www.pylonsproject.org</a></p>
+                            
+                    </section>
+                    <section>
+                        <h2>Pyramid</h2>
+                        <ul>
+                            <li>Larger than Flask, smaller than Django</li>
+                            <li>Ships with URL routing and Authentication</li>
+                            <li>Slightly more opinionated than Flask</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>web2py</h2>
+                        <p>Don't use this.</p>
+                    </section>
+                    
+                </section>
+                
+                <section>
+                    <h2>Thanks!</h2>
+                    <p>These slides can be found at: </p>
+                    <br>
+                    <p>
+                        Code from tonight's presentation can be found at:<br>
+                        <a href="https://github.com/fayettepy/fayettepy-flask/" target=_blank>https://github.com/fayettepy/fayettepy-flask/</a>
+                        <a href="https://github.com/fayettepy/fayettepy-django/" target=_blank>https://github.com/fayettepy/fayettepy-django/</a>
+                    </p>
+                    
+                
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
